@@ -1,9 +1,8 @@
-import { routerProd } from "./routes/products.routes.js";
 import express from "express";
-
-const app = express()
+import { routerProd } from "./routes/products.routes.js";
 
 const PORT = 8080
+const app = express()
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))

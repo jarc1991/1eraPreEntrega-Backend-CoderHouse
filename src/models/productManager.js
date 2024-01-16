@@ -4,23 +4,21 @@ import { v4 as uuidv4 } from 'uuid'
 
 export class ProductManager {
 
-    constructor(path) {
+    constructor(file) {
 
         this.products = []
-        this.path = path
+        this.file = file
     }
-
-
 
     async getProducts(){
 
-        const products = JSON.parse(await fs.readFile(this.path, 'utf-8'))
+        const products = JSON.parse(await fs.readFile(this.file, 'utf-8')) 
         return products
     }
 
     async getProductsById (id){
 
-        const products = JSON.parse(await fs.readFile(this.path, 'utf-8')) 
+        const products = JSON.parse(await fs.readFile(this.file, 'utf-8')) 
         const product = products.find (prod => prod.id === id)
         return product
     
@@ -28,25 +26,28 @@ export class ProductManager {
 
     async addProduct(prod){
 
-        const products = JSON.parse(await fs.readFile(this.path, 'utf-8')) 
-        const productExist = products.find (prod => prod.id === id)
+        const products = JSON.parse(await fs.readFile(this.file, 'utf-8')) 
+        const productExist = products.find (prod => prod.code === code)
         
         if(productExist){
 
             return false
-        }
+            
+        }else {
 
         prod.id = uuidv4()
 
         products.push(prod)
-        await fs.writeFile(this.path, JSON.stringify(products))
+        await fs.writeFile(this.file, JSON.stringify(products))
         return true
+
+        }
 
     }
 
     async updateProduct(id, product){
 
-        const products = JSON.parse(await fs.readFile(this.path, 'utf-8')) 
+        const products = JSON.parse(await fs.readFile(this.file, 'utf-8')) 
         const prod = products.find (pro => pro.id === id)
 
         if(prod){
@@ -59,7 +60,7 @@ export class ProductManager {
             prod.code = product.code
 
             products.push(prod)
-            await fs.writeFile(this.path, JSON.stringify(products))
+            await fs.writeFile(this.file, JSON.stringify(products))
 
             return true
 
@@ -73,13 +74,13 @@ export class ProductManager {
 
     async deleteProduct(id){
 
-        const products = JSON.parse(await fs.readFile(this.path, 'utf-8')) 
+        const products = JSON.parse(await fs.readFile(this.file, 'utf-8')) 
         const product= products.find (prod => prod.id === id)
 
         if(product){
 
             products.filter(producto => producto.id !== id)
-            await fs.writeFile(this.path, JSON.stringify(products))
+            await fs.writeFile(this.file, JSON.stringify(products))
             return true
         }else{
 
