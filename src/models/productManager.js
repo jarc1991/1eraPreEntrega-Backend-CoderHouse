@@ -19,27 +19,26 @@ export class ProductManager {
     async getProductsById (id){
 
         const products = JSON.parse(await fs.readFile(this.file, 'utf-8')) 
-        const product = products.find (prod => prod.id === id)
+        const product = products.find(prod => prod.id === id)
         return product
     
     }
 
     async addProduct(prod){
 
-        const products = JSON.parse(await fs.readFile(this.file, 'utf-8')) 
-        const productExist = products.find (prod => prod.code === code)
-        
-        if(productExist){
+        const prods = JSON.parse(await fs.readFile(this.file, 'utf-8'))
+        const existeProd = prods.find(producto => producto.code === prod.code)
+
+        if (existeProd) {
 
             return false
-            
-        }else {
 
-        prod.id = uuidv4()
+        } else {
 
-        products.push(prod)
-        await fs.writeFile(this.file, JSON.stringify(products))
-        return true
+            prod.id = uuidv4()
+            prods.push(prod)
+            await fs.writeFile(this.file, JSON.stringify(prods))
+            return true
 
         }
 
@@ -47,10 +46,10 @@ export class ProductManager {
 
     async updateProduct(id, product){
 
-        const products = JSON.parse(await fs.readFile(this.file, 'utf-8')) 
-        const prod = products.find (pro => pro.id === id)
+        const prods = JSON.parse(await fs.readFile(this.file, 'utf-8'))
+        const prod = prods.find(producto => producto.id === id)
 
-        if(prod){
+        if (prod) {
 
             prod.title = product.title
             prod.description = product.description
@@ -59,15 +58,14 @@ export class ProductManager {
             prod.thumbnail = product.thumbnail
             prod.code = product.code
 
-            products.push(prod)
-            await fs.writeFile(this.file, JSON.stringify(products))
-
+            prods.push(prod)
+            await fs.writeFile(this.file, JSON.stringify(prods))
             return true
 
-
-        }else{
+        } else {
 
             return false
+
         }
 
     }
@@ -79,9 +77,10 @@ export class ProductManager {
 
         if(product){
 
-            products.filter(producto => producto.id !== id)
-            await fs.writeFile(this.file, JSON.stringify(products))
+            await fs.writeFile(this.file, JSON.stringify(products.filter(producto => producto.id !== id)))
+
             return true
+            
         }else{
 
             return false
