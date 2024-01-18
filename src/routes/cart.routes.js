@@ -1,61 +1,72 @@
-import express from 'express'
-import fs from 'fs'
-const routerCart = express.Router()
+import express from 'express';
+import { CartManager } from "../models/cartManager.js";
+
+const cartRouter = express.Router()
+
+const cartManager = new CartManager()
+
+//Metodo para crear cart
+
+cartRouter.post("/", async (req, res) => {
+
+  const create = await cartManager.createCart();
+
+  if (create) {
+
+    res.status(200).send("Se ha creado con éxito")
+
+  } else {
+
+    res.status(400).send("Error")
+
+  }
+});
 
 
-const json__products = fs.readFileSync('./cart.json', 'utf-8')
-let products = JSON.parse(json__products)
+//CartById
 
-//Obtener todos los productos
+cartRouter.get("/:cid", async (req, res) => {
 
-routerCart.get('/', (req, res)=> {
+  const cid = req.params.id
 
-    res.json({ products })
+  const cart = await cartManager.getCartById(cid)
 
-})
+  if (cart) {
 
-//Obtener producto en especifico
+    res.status(200).send(cart)
 
-routerCart.get('/:cid', (req, res) => {
+  } else {
 
-    const cid = parseInt(req.params.cid)
-    console.log(cid)
-
-    const product = products.find ((product) => product.id === cid)
-
-    if(!product){
-
-        return res.status(404).json({ error:'Producto no encontrado.' })
-
-    }else {
-
-        return res.json(product)
-    }
-
-})
-
-//Agregar un nuevo producto
-
-routerCart.post('/', (req, res) =>{
-
-    const { title, description, code, price, stock } = req.body
-
-    if(!title || !description || !code || !price || !stock ){
-
-        res.status(400).send('Las entradas deben tener un nombre, una descripción, un código, un stock')
-    }
-
-    const newProduct = req.body 
-
-    products.push(newProduct)
-
-    const json_products = JSON.stringify(products)
-
-    fs.writeFileSync('./cart.json', json_products, 'utf-8')
-
-    res.json({ message: 'Producto agregado correctamente' })
+    res.status(404).send("No se ha encontrado el ID")
+  }
 
 })
 
+//Agregar
 
-export { routerCart }
+cartRouter.post("/:cid/product/:pid", async (req, res) => {
+
+  const { cid, pid } = req.params;
+  const { quantity } = req.body;
+
+  const add = await cartManager.addProduct(
+
+    cid,
+    pid,
+    quantity
+
+  )
+
+  if (!add) {
+
+    res.status(404).send("Error al adherir");
+
+  } else {
+
+    res.status(200).send(`Producto se ha agregado al carrito con id: ${cid}`);
+  }
+
+})
+
+
+export { cartRouter };
