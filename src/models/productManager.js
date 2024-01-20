@@ -10,10 +10,20 @@ export class ProductManager {
         this.file = file
     }
 
-    async getProducts(){
+    async getProducts(limit){
 
         const products = JSON.parse(await fs.readFile(this.file, 'utf-8')) 
-        return products
+
+        if (limit) {
+
+            return products.slice(0, limit);
+
+          } else {
+
+            return products;
+
+          }
+
     }
 
     async getProductsById (id){

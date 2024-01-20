@@ -12,7 +12,7 @@ routerProd.get ('/', async (req, res) => {
 
     const products = product.slice(0, limit)
 
-    res.status(200).send(products)
+    res.status(200).json(products)
 
 })
 
@@ -23,7 +23,7 @@ routerProd.get('/:pid', async(req, res) => {
 
     if(product){
 
-        res.status(200).send(product)
+        res.status(200).json(product)
 
     }else{
 
