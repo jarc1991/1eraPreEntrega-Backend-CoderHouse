@@ -1,11 +1,11 @@
-import express from 'express';
-import { CartManager } from "../models/cartManager.js";
+import express from 'express'
+import { CartManager } from "../models/cartManager.js"
 
 const cartRouter = express.Router()
 
 const cartManager = new CartManager()
 
-//Metodo para crear cart
+// Crear carrito
 
 cartRouter.post("/", async (req, res) => {
 
@@ -13,22 +13,67 @@ cartRouter.post("/", async (req, res) => {
 
   if (create) {
 
-    res.status(200).send("Se ha creado con éxito")
+    res.status(200).send("Carrito creado.")
+     
+  } else {
+
+    res.status(400).send("Error.")
+
+  }
+
+})
+
+// Agregar
+
+cartRouter.post("/:cid/product/:pid", async (req, res) => {
+
+  const { cid, pid } = req.params;
+  const { quantity } = req.body;
+
+  const product = await cartManager.addProduct(
+
+    cid,
+    pid,
+    quantity
+
+  );
+
+  if (!product) {
+
+    res.status(404).send("El carrito no se pudo crear.")
+
+  } else {
+
+    res.status(200).send("Producto se ha agregado al carrito.")
+
+  }
+
+})
+
+// Eliminar
+
+cartRouter.delete("/:cid", async (req, res) => {
+
+  const {cid} = req.params;
+  const del = await cartManager.deleteCart(cid);
+
+  if (del) {
+
+    res.status(200).send("Carrito eliminado")
 
   } else {
 
     res.status(400).send("Error")
 
   }
-});
 
+})
 
-//CartById
+// Cart by Id
 
 cartRouter.get("/:cid", async (req, res) => {
 
-  const cid = req.params.id
-
+  const cid = req.params.id;
   const cart = await cartManager.getCartById(cid)
 
   if (cart) {
@@ -37,36 +82,49 @@ cartRouter.get("/:cid", async (req, res) => {
 
   } else {
 
-    res.status(404).send("No se ha encontrado el ID")
+    res.status(404).send("El carrito no se ha encontrado.")
+
   }
 
 })
 
-//Agregar
+// Eliminar producto
 
-cartRouter.post("/:cid/product/:pid", async (req, res) => {
+cartRouter.delete("/:cid/product/:pid", async (req, res) => {
+
+  const { cid, pid } = req.params
+
+  const product = await cartManager.removeProduct(cid, pid)
+
+  if (!product) {
+
+    return res.status(404).send("No se pudo eliminar.")
+
+  } else {
+
+    res.status(200).send("Producto eliminado del carrito")
+
+  }
+
+})
+
+// Actualizar cantidad
+
+cartRouter.put("/:cid/product/:pid", async (req, res) => {
 
   const { cid, pid } = req.params;
   const { quantity } = req.body;
 
-  const add = await cartManager.addProduct(
+  const quant = await cartManager.updateQuantity(cid, pid, quantity)
 
-    cid,
-    pid,
-    quantity
+  if (!quant) {
 
-  )
-
-  if (!add) {
-
-    res.status(404).send("Error al adherir");
+    return res.status(404).send("No se pudo actualizar.")
 
   } else {
 
-    res.status(200).send(`Producto se ha agregado al carrito con id: ${cid}`);
+    res.status(200).send("Cantidad del producto actualizada.")
   }
-
-})
-
+});
 
 export { cartRouter };
