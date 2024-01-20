@@ -1,22 +1,24 @@
 import { promises as fs } from "fs";
-import { join } from "path";
-import { __dirname } from "../path.js";
 import { v4 as uuidv4 } from 'uuid'
 
-const cartFile = join(__dirname, "../carts.json")
-
-
-const readCart = await fs.readFile(cartFile, "utf-8")
-
 export class CartManager {
+
+  constructor(){
+
+    this.carts = []
+    this.file = '../carts.json'
+
+  }
 
   // Get
 
   async getCarts() {
 
+    const readCart = await fs.readFile(this.file, "utf-8")
+
     try {
 
-      return JSON.parse( readCart )
+      return JSON.parse( this.file )
 
     } catch (error) {
 
@@ -49,7 +51,7 @@ export class CartManager {
 
     carts.id = uuidv4()
     carts.push(newCart)
-    await fs.writeFile(cartFile, JSON.stringify(carts))
+    await fs.writeFile(this.file, JSON.stringify(carts))
     return newCart;
 
   }
@@ -111,7 +113,7 @@ export class CartManager {
         })
       }
 
-      await fs.writeFile(cartFile, JSON.stringify(carts, null, 2))
+      await fs.writeFile(this.file, JSON.stringify(carts, null, 2))
 
       return true
 

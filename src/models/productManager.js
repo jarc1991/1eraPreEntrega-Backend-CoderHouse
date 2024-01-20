@@ -54,9 +54,30 @@ export class ProductManager {
 
     }
 
-    async updateProduct(id, product){
+    async updateProduct(id, {newTitle, newDescription, newThumbnail, newCode, newPrice, newStock } ){
 
-        const prods = JSON.parse(await fs.readFile(this.file, 'utf-8'))
+        const requireproduct = await this.getProductsById(id)
+
+        const product = {
+
+            title: newTitle || requireproduct.title,
+            description: newDescription || requireproduct.description,
+            price: newPrice || requireproduct.price,
+            code: newCode || requireproduct.code,
+            stock: newStock || requireproduct.stock,
+            thumbnail: newThumbnail || requireproduct.thumbnail, 
+            id: id
+        }
+
+        const products = await this.getProducts()
+
+        const index = products.findIndex(prod => prod.id == id)
+        
+        products.splice(index, 1, product)
+
+        await fs.writeFile(this.file, JSON.stringify(products))
+        
+        /*const prods = JSON.parse(await fs.readFile(this.file, 'utf-8'))
         const prod = prods.find(producto => producto.id === id)
 
         if (prod) {
@@ -76,7 +97,7 @@ export class ProductManager {
 
             return false
 
-        }
+        }*/
 
     }
 
