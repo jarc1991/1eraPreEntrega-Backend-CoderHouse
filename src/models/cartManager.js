@@ -1,14 +1,14 @@
 import { promises as fs } from "fs";
 import { v4 as uuidv4 } from 'uuid'
 
-const productsJson = "../products.json"
+const productsJson = "./products.json"
 
 export class CartManager {
 
   constructor(){
 
     this.carts = []
-    this.file = '../carts.json'
+    this.file = './carts.json'
 
   }
 
@@ -20,7 +20,7 @@ export class CartManager {
 
     try {
 
-      return JSON.parse( this.file )
+      return JSON.parse( readCart )
 
     } catch (error) {
 
