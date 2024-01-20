@@ -36,7 +36,9 @@ cartRouter.post("/:cid/product/:pid", async (req, res) => {
     pid,
     quantity
 
-  );
+  )
+
+console.log(product)
 
   if (!product) {
 
