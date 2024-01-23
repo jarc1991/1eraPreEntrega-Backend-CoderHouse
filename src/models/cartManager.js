@@ -47,7 +47,7 @@ export class CartManager {
 
     const newCart = {
 
-        id: uuidv4,
+        id: uuidv4(),
         products: [],
 
     }
